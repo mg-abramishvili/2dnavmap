@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>map</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="dragscroll.js"></script>
+    <script src="https://www.jqueryscript.net/demo/jQuery-Plugin-For-Panning-Zooming-Any-Elements-panzoom/dist/panzoom.js"></script>
+
+    <style>
+        .key-anim1,
+        .key-anim2,
+        .key-anim3,
+        .key-anim4,
+        .key-anim5,
+        .key-anim6,
+        .key-anim7,
+        .key-anim8,
+        .key-anim9,
+        .key-anim10 {
+            stroke-dasharray: 10;
+            stroke-dashoffset: -2000;
+            animation: Drawpath 20s linear infinite;
+        }
+
+        @keyframes Drawpath {
+            from {
+                stroke-dashoffset: -2000;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        body {
+            position: relative;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 1024px;
+            height: 576px;
+            overflow: hidden;
+            position: relative;
+            border: 4px solid #1c92d2;
+            margin: 0 auto;;
+        }
+
+        .dragscroll {
+            width: calc(1024px - 280px);
+            height: 576px;
+            overflow: hidden;
+        }
+        
+        .wrapper {
+            width: 4000px;
+            height: 1429px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .map {
+
+        }
+
+        .map img {
+            width: 4000px;
+            height: 1429px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .map-path {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4000px;
+            height: 1429px;
+        }
+
+        .list {
+            position: absolute;
+            right: 0;
+            width: 280px;
+            height: 100%;
+            background-color: rgba(0,0,0,0.2);
+            z-index: 100;
+            background: #1c92d2;
+        }
+
+        .list input {
+            width: calc(100% - 80px);
+            margin: 0 20px;
+            line-height: 1;
+            padding: 9px 15px;
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 25px;
+            border: 3px solid #1574a0;
+        }
+
+        .list ul {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+            overflow-y: scroll;
+            height: 480px;
+        }
+
+        .list ul li {
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .list ul li:last-child {
+            border-bottom: 0;
+        }
+
+        .list ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            background-color: rgba(255,255,255,0.1);
+            display: block;
+            padding: 20px 20px;
+            line-height: 1;
+        }
+
+        .list ul li a strong {
+            display: block;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .list ul li a span {
+            display: inline-block;
+            padding: 3px 7px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 25px;
+            font-size: 10px;
+            margin-bottom: 6px;
+        }
+
+        /* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #1574a0;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #1574a0;
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+    
+    <!--<button id="zoomin">+</button>
+    <button id="zoomout">-</button>-->
+
+    <div class="list">
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Поиск ...">
+        <ul id="myUL">
+            <li>
+                <a id="map01-link">
+                    <strong>Adidas</strong>
+                    <span>спортивные товары</span>
+                    <span>одежда</span>
+                </a>
+            </li>
+            <li>
+                <a id="map02-link">
+                    <strong>Bershka</strong>
+                    <span>одежда</span>
+                    <span>обсувь</span>
+                </a>
+            </li>
+            <li>
+                <a id="map03-link">
+                    <strong>Аптека «Планета Здоровья»</strong>
+                    <span>аптека</span>
+                    <span>лекарства</span>
+                </a>
+            </li>
+            <li>
+                <a id="map04-link">
+                    <strong>Синема Парк</strong>
+                    <span>кинотеатр</span>
+                </a>
+            </li>
+            <li>
+                <a id="map05-link">
+                    <strong>Ситилинк</strong>
+                    <span>бытовая техника</span>
+                    <span>компьютеры</span>
+                    <span>смартфоны</span>
+                </a>
+            </li>
+            <li>
+                <a id="map06-link">
+                    <strong>Yota</strong>
+                    <span>сотовая связь</span>
+                    <span>интернет</span>
+                </a>
+            </li>
+          </ul>
+    </div>
+
+    <div class="dragscroll">
+        <div class="wrapper" id="wrapper">
+            
+            <div class="map" id="map">
+                <img src="map.png"/>
+            </div>
+
+            <svg class="map-path" viewBox="0 0 4000 1429" id="map01">
+                <path class="key-anim1" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1918 983, undefined undefined"></path>
+                <circle id="1" cx="1918" cy="983" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim2" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2025 991, 1918 983"></path>
+                <circle id="2" cx="2025" cy="991" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim3" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2028 693, 2025 991"></path>
+                <circle id="3" cx="2028" cy="693" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim4" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2793 691, 2028 693"></path>
+                <circle id="4" cx="2793" cy="691" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim5" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2801 777, 2793 691"></path>
+                <circle id="5" cx="2801" cy="777" r="15" fill="#f33"></circle>
+            </svg>
+
+            <svg class="map-path" viewBox="0 0 4000 1429" id="map02">
+                <path class="key-anim1" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1914 916, undefined undefined"></path><circle id="1" cx="1914" cy="916" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim2" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1924 1142, 1914 916"></path><circle id="2" cx="1924" cy="1142" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim3" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1472 1144, 1924 1142"></path><circle id="3" cx="1472" cy="1144" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim4" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1464 874, 1472 1144"></path><circle id="4" cx="1464" cy="874" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim5" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1296 870, 1464 874"></path><circle id="5" cx="1296" cy="870" r="15" fill="#f33"></circle>
+            </svg>
+
+            <svg class="map-path" viewBox="0 0 4000 1429" id="map03">
+                <path class="key-anim1" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1917 920, undefined undefined"></path><circle id="1" cx="1917" cy="920" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim2" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1906 690, 1917 920"></path><circle id="2" cx="1906" cy="690" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim3" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1757 658, 1906 690"></path><circle id="3" cx="1757" cy="658" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim4" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1757 512, 1757 658"></path><circle id="4" cx="1757" cy="512" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim5" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1706 501, 1757 512"></path><circle id="5" cx="1706" cy="501" r="15" fill="#f33"></circle>
+            </svg>
+
+            <svg class="map-path" viewBox="0 0 4000 1429" id="map04">
+                <path class="key-anim1" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1912 914, undefined undefined"></path><circle id="1" cx="1912" cy="914" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim2" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1789 920, 1912 914"></path><circle id="2" cx="1789" cy="920" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim3" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1789 682, 1789 920"></path><circle id="3" cx="1789" cy="682" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim4" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1162 674, 1789 682"></path><circle id="4" cx="1162" cy="674" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim5" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1165 965, 1162 674"></path><circle id="5" cx="1165" cy="965" r="15" fill="#f33"></circle>
+
+                <path class="key-anim6" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1029 965, 1165 965"></path><circle id="6" cx="1029" cy="965" r="15" fill="#f33"></circle>
+            </svg>
+
+            <svg class="map-path" viewBox="0 0 4000 1429" id="map05">
+                <path class="key-anim1" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1922 914, undefined undefined"></path><circle id="1" cx="1922" cy="914" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim2" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2029 917, 1922 914"></path><circle id="2" cx="2029" cy="917" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim3" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2034 1152, 2029 917"></path><circle id="3" cx="2034" cy="1152" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim4" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2957 1146, 2034 1152"></path><circle id="4" cx="2957" cy="1146" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim5" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M2944 450, 2957 1146"></path><circle id="5" cx="2944" cy="450" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim6" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M3248 373, 2944 450"></path><circle id="6" cx="3248" cy="373" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim7" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M3448 418, 3248 373"></path><circle id="7" cx="3448" cy="418" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim8" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M3472 984, 3448 418"></path><circle id="8" cx="3472" cy="984" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim9" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M3677 970, 3472 984"></path><circle id="9" cx="3677" cy="970" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim10" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M3677 1042, 3677 970"></path><circle id="10" cx="3677" cy="1042" r="15" fill="#f33"></circle></svg>
+            </svg>
+
+            <svg class="map-path" viewBox="0 0 4000 1429" id="map06">
+                <path class="key-anim1" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1914 912, undefined undefined"></path><circle id="1" cx="1914" cy="912" r="15" fill="#f33"></circle>
+            
+                <path class="key-anim2" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1901 1122, 1914 912"></path><circle id="2" cx="1901" cy="1122" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim3" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1789 1114, 1901 1122"></path><circle id="3" cx="1789" cy="1114" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim4" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M1786 672, 1789 1114"></path><circle id="4" cx="1786" cy="672" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim5" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M866 682, 1786 672"></path><circle id="5" cx="866" cy="682" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim6" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M853 1101, 866 682"></path><circle id="6" cx="853" cy="1101" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim7" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M472 1085, 853 1101"></path><circle id="7" cx="472" cy="1085" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim8" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M450 898, 472 1085"></path><circle id="8" cx="450" cy="898" r="15" fill="#f33"></circle>
+                
+                <path class="key-anim9" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M381 906, 450 898"></path><circle id="9" cx="381" cy="906" r="15" fill="#f33"></circle>
+            </svg>
+
+        </div>
+    </div></div>
+
+    <script>
+        const elem = document.getElementById('wrapper');
+                const zoomInButton = document.getElementById('zoomin');
+                const zoomOutButton = document.getElementById('zoomout');
+                const resetButton = document.getElementById('reset');
+                const panzoom = Panzoom(elem, {
+                    duration: 700,
+                    startX: -9000,
+                    startY: -2200,
+                    startScale: 0.18,
+                    maxScale: 2,
+                    minScale: 0.18,
+                });
+                const parent = elem.parentElement
+        // No function bind needed
+        parent.addEventListener('wheel', panzoom.zoomWithWheel);
+        zoomInButton.addEventListener('click', panzoom.zoomIn)
+        zoomOutButton.addEventListener('click', panzoom.zoomOut)
+        resetButton.addEventListener('click', panzoom.reset)
+              </script>
+
+
+
+
+
+              <script>
+
+function myFunction() {
+  // Declare variables
+  var input, filter, ul, li, a, i, txtValue;
+  input = document.getElementById('myInput');
+  filter = input.value.toUpperCase();
+  ul = document.getElementById("myUL");
+  li = ul.getElementsByTagName('li');
+
+  // Loop through all list items, and hide those who don't match the search query
+  for (i = 0; i < li.length; i++) {
+    a = li[i].getElementsByTagName("a")[0];
+    txtValue = a.textContent || a.innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+                
+              </script>
+
+
+
+              <script>
+    $("#map01").hide();
+    $("#map02").hide();
+    $("#map03").hide();
+    $("#map04").hide();
+    $("#map05").hide();
+    $("#map06").hide();
+
+$("#map01-link").click(function(){
+    $("#map02").hide();
+    $("#map03").hide();
+    $("#map04").hide();
+    $("#map05").hide();
+    $("#map06").hide();
+    $("#map01").show();
+});
+
+$("#map02-link").click(function(){
+    $("#map01").hide();
+    $("#map03").hide();
+    $("#map04").hide();
+    $("#map05").hide();
+    $("#map06").hide();
+    $("#map02").show();
+});
+
+$("#map03-link").click(function(){
+    $("#map01").hide();
+    $("#map02").hide();
+    $("#map04").hide();
+    $("#map05").hide();
+    $("#map06").hide();
+    $("#map03").show();
+});
+
+$("#map04-link").click(function(){
+    $("#map01").hide();
+    $("#map02").hide();
+    $("#map03").hide();
+    $("#map05").hide();
+    $("#map06").hide();
+    $("#map04").show();
+});
+
+$("#map05-link").click(function(){
+    $("#map01").hide();
+    $("#map02").hide();
+    $("#map03").hide();
+    $("#map04").hide();
+    $("#map06").hide();
+    $("#map05").show();
+});
+
+$("#map06-link").click(function(){
+    $("#map01").hide();
+    $("#map02").hide();
+    $("#map03").hide();
+    $("#map04").hide();
+    $("#map05").hide();
+    $("#map06").show();
+});
+              </script>
+    
+</body>
+</html>
