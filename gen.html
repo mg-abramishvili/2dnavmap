@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>map</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <style>
+        .key-anim1,
+        .key-anim2,
+        .key-anim3,
+        .key-anim4,
+        .key-anim5,
+        .key-anim6,
+        .key-anim7,
+        .key-anim8,
+        .key-anim9,
+        .key-anim10 {
+            stroke-dasharray: 10;
+            stroke-dashoffset: -2000;
+            animation: Drawpath 20s linear infinite;
+        }
+
+        @keyframes Drawpath {
+            from {
+                stroke-dashoffset: -2000;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        body {
+            position: relative;
+        }
+        
+        .wrapper {
+            width: 4000px;
+            height: 1429px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .map {
+            width: 4000px;
+            height: 1429px;
+        }
+
+        .map img {
+            width: 4000px;
+            height: 1429px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .map-path {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4000px;
+            height: 1429px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="map">
+            <img src="map.png"/>
+        </div>
+        <svg class="map-path" viewbox="0 0 4000 1429">
+
+            
+        </svg>
+    </div>
+    
+    <script>
+        var id = 0;
+
+        $(document).ready(function() {
+            $(".wrapper").on("click", function(event) {
+                id++;
+                var x = event.pageX - this.offsetLeft;
+                var y = event.pageY - this.offsetTop;
+
+                var element = $('<svg id="'+x+'" class="'+y+'"><path class="key-anim'+id+'" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M'+x+' '+y+', 200 100"/><circle id="'+id+'" cx="'+x+'" cy="'+y+'" r="15" fill="#f33" /></svg>');
+                $(".map-path").append(element);
+
+                var previousx = $(element).closest('svg').prev().attr('id');
+                var previousy = $(element).closest('svg').prev().attr('class');
+                
+                var newelement = $('<svg id="'+x+'" class="'+y+'"><path class="key-anim'+id+'" fill="none" stroke-width="12px" stroke="rgba(200,10,10,0.5)" d="M'+x+' '+y+', '+previousx+' '+previousy+'"/><circle id="'+id+'" cx="'+x+'" cy="'+y+'" r="15" fill="#f33" /></svg>');
+                $(".map-path").append(newelement);
+
+                $(element).remove();
+                
+            });
+        });
+    </script>
+    
+</body>
+</html>
